@@ -4,7 +4,7 @@ var contID = -1;
 var idString = "";
 var subscription = -1;
 var isShop = false;
-var mousePosition = false;
+var positionString = null;
 
 var oldSkins = {};
 
@@ -41,7 +41,7 @@ function ContainerChange(tableName, changes, del)
     $("#CloseButton").visible = true;
 
   if ("position" in del)
-    mousePosition = false;
+    positionString = null;
 
 
 
@@ -154,7 +154,7 @@ function SetPosition(pos)
 {
   var panel = $.GetContextPanel();
   if (pos == "mouse"){
-    mousePosition = true;
+    positionString = "mouse";
     var cursor = GameUI.GetCursorPosition();
     $.Msg(panel.contentwidth, " -- ", panel.contentheight);
     $.Msg(panel.actuallayoutwidth, " -- ", panel.actuallayoutheight);
@@ -165,9 +165,30 @@ function SetPosition(pos)
 
     panel.style.position = x + "px " + y + "px 0px;";
   }
+  else if (pos == "entity"){
+    positionString = "entity";
+    var ent = PlayerTables.GetTableValue(idString, "entity");
+    if (ent != undefined){
+      var origin = Entities.GetAbsOrigin(ent)
+      var wx = Game.WorldToScreenX(origin[0], origin[1], origin[2]);
+      var wy = Game.WorldToScreenY(origin[0], origin[1], origin[2]);
+      var sw = GameUI.CustomUIConfig().screenwidth;
+      var sh = GameUI.CustomUIConfig().screenheight
+      var scale = 1080 / sh;
+
+      var x = scale * Math.min(sw - panel.desiredlayoutwidth,Math.max(0, wx - panel.desiredlayoutwidth/2));
+      var y = scale * Math.min(sh - panel.desiredlayoutheight,Math.max(0, wy - panel.desiredlayoutheight - 50));
+
+      panel.style.position = x + "px " + y + "px 0px;";
+    }
+    else
+    {
+      panel.style.position = "0px 0px 0px;";
+    }
+  }
   else {
     panel.style.position = pos;
-    mousePosition = false;
+    positionString = null;
   }
 }
 
@@ -191,8 +212,6 @@ function NewContainer(id)
   panel.SetDraggable(pt.draggable !== 0);
   isShop = pt.shop === 1;
 
-  $.Msg("oncloseclicked: ", pt.OnCloseClicked);
-
   if (pt.OnCloseClicked === 0)
     $("#CloseButton").visible = false;
 
@@ -200,8 +219,8 @@ function NewContainer(id)
   var count = 0;
   var f = null;
 
-  if (pt.position === "mouse"){
-    panel.style.opacity = "0;"
+  if (pt.position === "mouse" || pt.position === "entity"){
+    panel.style.position = "-1000px -1000px 0px;"
     f = function(){
       count++;
       if (panel.desiredlayoutheight === 0){
@@ -209,8 +228,7 @@ function NewContainer(id)
         return;
       }
 
-      SetPosition(pt.position || "200px 200px 0px");
-      panel.style.opacity = "1.0;"
+      SetPosition(pt.position);
     };
 
     $.Schedule(1/30, f);
@@ -224,8 +242,8 @@ function OpenContainer()
 {
   var panel = $.GetContextPanel();
 
-  if (!panel.visible && mousePosition){
-    SetPosition("mouse");
+  if (!panel.visible && positionString){
+    SetPosition(positionString);
   }
 
   panel.visible = true;

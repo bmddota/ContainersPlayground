@@ -20,7 +20,7 @@ function CreateLootBox(loc)
     --skins =       {"Hourglass"},
     headerText =  "Loot Box",
     buttons =     {"Take All"},
-    position =    "mouse",--"900px 200px 0px",
+    position =    "entity", --"mouse",--"900px 200px 0px",
     OnEmptyAndClosed = function(container)
       print("Empty and closed")
       container:GetEntity():RemoveSelf()
@@ -148,7 +148,8 @@ function GameMode:OFPL()
       layout =      {6,4,4,6},
       headerText =  "Shared Bank",
       pids =        all,
-      position =    "600px 400px 0px",
+      position =    "entity", --"600px 400px 0px",
+      entity =      sharedBankEnt,
       closeOnOrder= true,
       range =       230,
   })
@@ -185,7 +186,7 @@ function GameMode:OFPL()
        skins =       {},
        headerText =  "Item Shop",
        pids =        {},
-       position =    "1000px 300px 0px",
+       position =    "entity", --"1000px 300px 0px",
        entity =      itemShopEnt,
        items =       sItems,
        prices =      prices,
@@ -225,7 +226,7 @@ function GameMode:OFPL()
        skins =       {},
        headerText =  "Radiant Shop",
        pids =        {},
-       position =    "1000px 300px 0px",
+       position =    "entity", --"1000px 300px 0px",
        entity =      contShopRadEnt,
        items =       sItems,
        prices =      prices,
@@ -241,6 +242,8 @@ function GameMode:OFPL()
       if PlayerResource:GetTeam(playerID) == DOTA_TEAM_GOODGUYS then
         contRadiantShop:Open(playerID)
         unit:Stop()
+      else
+        Containers:DisplayError(playerID, "#dota_hud_error_unit_command_restricted")
       end
     end,
     })
@@ -267,7 +270,7 @@ function GameMode:OFPL()
        skins =       {},
        headerText =  "Dire Shop",
        pids =        {},
-       position =    "1000px 300px 0px",
+       position =    "entity", --"1000px 300px 0px",
        entity =      contShopDireEnt,
        items =       sItems,
        prices =      prices,
@@ -283,6 +286,8 @@ function GameMode:OFPL()
       if PlayerResource:GetTeam(playerID) == DOTA_TEAM_BADGUYS then
         contShopDire:Open(playerID)
         unit:Stop()
+      else
+        Containers:DisplayError(playerID, "#dota_hud_error_unit_command_restricted")
       end
     end,
     })
@@ -350,7 +355,8 @@ function GameMode:OHIG(hero)
       layout =      {4,4,4,4},
       headerText =  "Private Bank",
       pids =        {pid},
-      position =    "200px 200px 0px",
+      position =    "entity", --"200px 200px 0px",
+      entity =      privateBankEnt,
       closeOnOrder= true,
       forceOwner =  hero,
       forcePurchaser=hero,

@@ -186,9 +186,20 @@ function EmitClientSound(msg)
   }
 }
 
+function ScreenHeightWidth()
+{
+  var panel = $.GetContextPanel();
+
+  GameUI.CustomUIConfig().screenwidth = panel.actuallayoutwidth;
+  GameUI.CustomUIConfig().screenheight = panel.actuallayoutheight;
+
+  $.Schedule(1/4, ScreenHeightWidth);
+}
 
 (function(){
   var panel = $.GetContextPanel();
+
+  ScreenHeightWidth();
 
   //containerPanel = $.CreatePanel( "Panel", panel, "" );
   //containerPanel.BLoadLayout("file://{resources}/layout/custom_game/containers/container.xml", false, false);
