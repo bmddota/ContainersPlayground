@@ -46,6 +46,11 @@ end
 
 -- Create the game mode when we activate
 function Activate()
+  Containers:Init()
   GameRules.GameMode = GameMode()
   GameRules.GameMode:InitGameMode()
 end
+
+--print(thisEntity, thisEntity:GetName(), thisEntity:GetClassname())
+--print('============')
+--PrintTable(_G)

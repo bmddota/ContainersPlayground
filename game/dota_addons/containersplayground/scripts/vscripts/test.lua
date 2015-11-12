@@ -2,6 +2,29 @@ require('libraries/playertables')
 require('libraries/containers')
 
 local unit = PlayerResource:GetSelectedHeroEntity(0)
+
+if not gmt then
+  gmt = getmetatable(_G)
+  print(gmt)
+  PrintTable(gmt)
+  setmetatable(_G, {
+    __newindex = function(t, n, v)
+      print('smt for _G',t,n,v)
+      rawset(t,n,v)
+    end
+    })
+end
+
+print(gmt)
+
+function ActivateTest()
+  
+end
+
+if true then
+  return
+end
+
 local asdf = {}
 for i=0,50 do
   table.insert(asdf, CreateItem("item_bfury",nil,nil))
