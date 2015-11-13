@@ -131,25 +131,4 @@
       }
     }
   }
-
-  "item_blank_item"
-  {
-    "ID"              "1837"
-    "AbilityBehavior"       "DOTA_ABILITY_BEHAVIOR_PASSIVE"
-    "BaseClass"           "item_datadriven"
-    //"AbilityTextureName"      "item_blank_item"
-
-    "ItemInitialCharges"      "0"
-    "ItemDroppable"         "0"
-    "ItemSellable"          "0"
-    "ItemPurchasable"       "0"
-    "ItemShareability"        "ITEM_NOT_SHAREABLE"
-    
-    // Special  
-    //-------------------------------------------------------------------------------------------------------------
-    "AbilitySpecial"
-    {
-      
-    }
-  }
 }
