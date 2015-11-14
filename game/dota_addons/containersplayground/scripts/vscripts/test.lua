@@ -2,24 +2,163 @@ require('libraries/playertables')
 require('libraries/containers')
 
 local unit = PlayerResource:GetSelectedHeroEntity(0)
+GameRules:SetUseUniversalShopMode(true)
 
-if not gmt then
-  gmt = getmetatable(_G)
-  print(gmt)
-  PrintTable(gmt)
-  setmetatable(_G, {
-    __newindex = function(t, n, v)
-      print('smt for _G',t,n,v)
-      rawset(t,n,v)
+if cc then
+  cc:Delete()
+end
+
+cc = Containers:CreateContainer({
+  layout =      {3,4,4},
+  skins =       {},
+  headerText =  "Equipment",
+  pids =        {0},
+  entity =      unit,
+  closeOnOrder = false,
+  equipment =   true,
+  position =    "1200px 200px 0px",
+  OnDragWorld = true,
+})
+
+--[[local item = CreateItem("item_tango", unit, unit)
+cc:AddItem(item, 4)
+
+item = CreateItem("item_tango", unit, unit)
+cc:AddItem(item, 6)
+
+item = CreateItem("item_force_staff", unit, unit)
+cc:AddItem(item)
+
+item = CreateItem("item_blade_mail", unit, unit)
+cc:AddItem(item)
+
+item = CreateItem("item_veil_of_discord", unit, unit)
+cc:AddItem(item)]]
+
+local itesm = {"item_soul_ring", "item_travel_boots", "item_travel_boots_2", "item_armlet", "item_dagon", "item_cyclone", "item_bottle"}
+for _,i in ipairs(itesm) do
+  local item = CreateItem(i, unit, unit)
+  cc:AddItem(item)
+end
+
+
+
+-- mango can't be activated from outside inventory if it ever touched it
+-- dust crash for same reason
+-- dagon no particles/effects for same reason
+-- soul ring crash for same reason
+-- bottle also doesn't activate for same reason
+
+-- travels don't work, TP either probably
+-- armlet doesn't activate at all
+
+-- euls has targeting issues
+-- aghs probably not for sure
+-- treads don't work in equipment
+
+cc:Open(0)
+
+--cc:SetEquipment(true)
+Timers(2, function()
+  --cc:SetEquipment(false)
+  --cc:SetEquipment(false)
+end)
+
+
+if true then
+  return
+end
+
+local items = {"item_bfury", "item_blade_mail"}
+
+local passives = {}
+
+local skips = {
+              item_winter_cookie=true,
+              item_winter_greevil_treat=true,
+              item_winter_kringle=true,
+              item_winter_greevil_chewy=true,
+              item_mystery_arrow=true,
+              item_mystery_hook=true,
+              item_greevil_whistle=true,
+              item_mystery_toss=true,
+              item_halloween_candy_corn=true,
+              item_winter_mushroom=true,
+              item_mystery_vacuum=true,
+              item_mystery_missile=true,
+              item_winter_stocking=true,
+              item_winter_coco=true,
+              item_greevil_whistle_toggle=true,
+              item_winter_greevil_garbage=true,
+              item_halloween_rapier=true,
+              item_winter_cake=true,
+              item_winter_skates=true,
+              item_present=true,
+              item_winter_ham=true,
+            }
+
+local pass = {item_blink="modifier_item_blink_dagger",item_blades_of_attack="modifier_item_blades_of_attack",item_broadsword="modifier_item_broadsword",item_chainmail="modifier_item_chainmail",item_claymore="modifier_item_claymore",item_helm_of_iron_will="modifier_item_helm_of_iron_will",item_javelin="modifier_item_javelin",item_mithril_hammer="modifier_item_mithril_hammer",item_platemail="modifier_item_plate_mail",item_quarterstaff="modifier_item_quarterstaff",item_quelling_blade="modifier_item_quelling_blade",item_ring_of_protection="modifier_item_ring_of_protection",item_gauntlets="modifier_item_gauntlets",item_slippers="modifier_item_slippers",item_mantle="modifier_item_mantle",item_branches="modifier_item_ironwood_branch",
+  item_belt_of_strength="modifier_item_belt_of_strength",item_boots_of_elves="modifier_item_boots_of_elves",item_robe="modifier_item_robe_of_magi",item_circlet="modifier_item_circlet",item_ogre_axe="modifier_item_ogre_axe",item_blade_of_alacrity="modifier_item_blade_of_alacrity",item_staff_of_wizardry="modifier_item_staff_of_wizardry",item_ultimate_orb="modifier_item_ultimate_orb",item_gloves="modifier_item_gloves_of_haste",item_lifesteal="modifier_item_mask_of_death",item_ring_of_regen="modifier_item_ring_of_regeneration",item_sobi_mask="modifier_item_sobi_mask",item_boots="modifier_item_boots_of_speed",item_gem="modifier_item_gem_of_true_sight",item_cloak="modifier_item_planeswalkers_cloak",item_talisman_of_evasion="modifier_item_talisman_of_evasion",item_magic_stick="modifier_item_magic_stick",
+  item_magic_wand="modifier_item_magic_wand",item_ghost="modifier_item_ghost_scepter",item_bottle="modifier_item_empty_bottle",item_ward_observer="modifier_item_observer_ward",item_ward_sentry="modifier_item_sentry_ward",item_travel_boots="modifier_item_boots_of_travel",item_phase_boots="modifier_item_phase_boots",item_demon_edge="modifier_item_demon_edge",item_eagle="modifier_item_eaglehorn",item_reaver="modifier_item_reaver",item_relic="modifier_item_sacred_relic",item_hyperstone="modifier_item_hyperstone",item_ring_of_health="modifier_item_ring_of_health",item_void_stone="modifier_item_void_stone",item_mystic_staff="modifier_item_mystic_staff",item_energy_booster="modifier_item_energy_booster",item_point_booster="modifier_item_point_booster",
+  item_vitality_booster="modifier_item_vitality_booster",item_power_treads="modifier_item_power_treads",item_hand_of_midas="modifier_item_hand_of_midas",item_oblivion_staff="modifier_item_oblivion_staff",item_pers="modifier_item_perseverance",item_poor_mans_shield="modifier_item_poor_mans_shield",item_bracer="modifier_item_bracer",item_wraith_band="modifier_item_wraith_band",item_null_talisman="modifier_item_null_talisman",item_mekansm="modifier_item_mekansm",item_vladmir="modifier_item_vladmir",item_buckler="modifier_item_buckler",item_ring_of_basilius="modifier_item_ring_of_basilius",item_pipe="modifier_item_pipe",item_urn_of_shadows="modifier_item_urn_of_shadows",item_headdress="modifier_item_headdress",item_sheepstick="modifier_item_sheepstick",item_orchid="modifier_item_orchid_malevolence",
+  item_cyclone="modifier_item_cyclone",item_force_staff="modifier_item_forcestaff",item_dagon="modifier_item_dagon",item_necronomicon="modifier_item_necronomicon",item_ultimate_scepter="modifier_item_ultimate_scepter",item_refresher="modifier_item_refresherorb",item_assault="modifier_item_assault",item_heart="modifier_item_heart",item_black_king_bar="modifier_item_black_king_bar",item_aegis="modifier_item_aegis",item_shivas_guard="modifier_item_shivas_guard",item_bloodstone="modifier_item_bloodstone",item_sphere="modifier_item_sphere",item_vanguard="modifier_item_vanguard",item_blade_mail="modifier_item_blade_mail",item_soul_booster="modifier_item_soul_booster",item_hood_of_defiance="modifier_item_hood_of_defiance",item_monkey_king_bar="modifier_item_monkey_king_bar",
+  item_radiance="modifier_item_radiance",item_butterfly="modifier_item_butterfly",item_greater_crit="modifier_item_greater_crit",item_basher="modifier_item_cranium_basher",item_bfury="modifier_item_battlefury",item_manta="modifier_item_manta_style",item_lesser_crit="modifier_item_lesser_crit",item_armlet="modifier_item_armlet",item_invis_sword="modifier_item_invisibility_edge",item_sange_and_yasha="modifier_item_sange_and_yasha",item_satanic="modifier_item_satanic",item_mjollnir="modifier_item_mjollnir",item_skadi="modifier_item_skadi",item_sange="modifier_item_sange",item_helm_of_the_dominator="modifier_item_helm_of_the_dominator",item_maelstrom="modifier_item_maelstrom",item_desolator="modifier_item_desolator",item_yasha="modifier_item_yasha",
+  item_mask_of_madness="modifier_item_mask_of_madness",item_diffusal_blade="modifier_item_diffusal_blade",item_ethereal_blade="modifier_item_ethereal_blade",item_soul_ring="modifier_item_soul_ring",item_arcane_boots="modifier_item_arcane_boots",item_orb_of_venom="modifier_item_orb_of_venom",item_stout_shield="modifier_item_stout_shield",item_ancient_janggo="modifier_item_ancient_janggo",item_medallion_of_courage="modifier_item_medallion_of_courage",item_veil_of_discord="modifier_item_veil_of_discord",item_necronomicon_2="modifier_item_necronomicon",item_necronomicon_3="modifier_item_necronomicon",item_diffusal_blade_2="modifier_item_diffusal_blade",item_dagon_2="modifier_item_dagon",item_dagon_3="modifier_item_dagon",item_dagon_4="modifier_item_dagon",item_dagon_5="modifier_item_dagon",
+  item_rod_of_atos="modifier_item_rod_of_atos",item_abyssal_blade="modifier_item_abyssal_blade",item_heavens_halberd="modifier_item_heavens_halberd",item_ring_of_aquila="modifier_item_ring_of_aquila",item_tranquil_boots="modifier_item_tranquil_boots",item_shadow_amulet="modifier_item_shadow_amulet",item_enchanted_mango="modifier_item_enchanted_mango",item_travel_boots_2="modifier_item_boots_of_travel",item_lotus_orb="modifier_item_lotus_orb",item_solar_crest="modifier_item_solar_crest",item_guardian_greaves="modifier_item_guardian_greaves",item_octarine_core="modifier_item_octarine_core",item_crimson_guard="modifier_item_crimson_guard",item_moon_shard="modifier_item_moon_shard",item_silver_edge="modifier_item_silver_edge",item_glimmer_cape="modifier_item_glimmer_cape"
+}
+
+for k,v in pairs(Containers.itemIDs) do
+  if tonumber(k) < 10000 then
+    --passives[v] = {}
+    local i = Containers.itemKV[v]
+    if i.BaseClass == "item_datadriven" then
+      if i.Modifiers then
+        local mods = i.Modifiers
+        for modname, mod in pairs(mods) do
+          if mod.Passive == 1 then
+            --table.insert(passives[v], modname)
+          end
+        end
+      end
+    elseif i.BaseClass and not pass[v] then
+      local item = CreateItem(v, nil, nil)
+      if item:GetIntrinsicModifierName() then
+        print(v .. '="' .. item:GetIntrinsicModifierName() .. '"')
+        table.insert(passives, v .. '="' .. item:GetIntrinsicModifierName() .. '"')
+      end
+      item:RemoveSelf()
     end
-    })
+  end
 end
 
-print(gmt)
+PrintTable(pass)
+--[[PrintTable(passives)
+local ddd = '{' .. table.concat(passives, ',') .. '}'
+print(ddd:len())
+local size = function(m) return math.floor(ddd:len()*m) end
+local cap = 8
+for i=0,cap-1 do
+  print(ddd:sub(size(i/cap), size((i+1)/cap)))
+end]]
 
-function ActivateTest()
-  
+
+
+--for k,v in pairs(items) do
+if true then
+  return
 end
+for k,v in pairs(Containers.itemIDs) do
+  if tonumber(k) < 1000 then
+    local item = CreateItem(v, nil, nil)
+    print(v, item:GetIntrinsicModifierName())
+    if item:GetIntrinsicModifierName() then
+      unit:AddNewModifier(unit, item, item:GetIntrinsicModifierName(), {duration=5})
+    end
+    Timers(10, function() item:RemoveSelf() end)
+  end
+end
+
+
 
 if true then
   return
